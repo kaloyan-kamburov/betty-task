@@ -1,0 +1,31 @@
+.carousel-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+}
+.carousel-viewport {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  max-width: 100%;
+}
+
+/* slide styles */
+.carousel-slide {
+  position: relative;
+}
+
+.carousel-slide img {
+  opacity: 1;
+  transition: opacity 0.5s linear;
+}
+
+.carousel-slide img.loading {
+  opacity: 0;
+}
+
+.slides-wrapper {
+  position: relative;
+  display: flex;
+}
