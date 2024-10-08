@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, useEffect, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { CarouselSlideProps } from "./Carousel.types";
 
 const CarouselSlide: FC<CarouselSlideProps> = ({
@@ -9,10 +9,18 @@ const CarouselSlide: FC<CarouselSlideProps> = ({
   onImgLoaded,
   cachedImages,
   loadExplicit = false,
+  transitionInProgress = false,
+  changeSize,
+  flexible = false,
+  slidesLength,
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [errorOccured, setErrorOccured] = useState<boolean>(false);
   const [imgRendered, setImgRendered] = useState<boolean>(true);
+  const [dimenisons, setDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>();
 
   // const getImage = async () => {
   //   if (cachedImages[page]) {
@@ -40,8 +48,22 @@ const CarouselSlide: FC<CarouselSlideProps> = ({
   // };
 
   const onLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    // console.log("yes");
+    // console.log((e.target as HTMLImageElement).naturalWidth);
+    // console.log((e.target as HTMLImageElement).naturalHeight);
+
+    console.log("asss");
     console.log((e.target as HTMLImageElement).naturalWidth);
-    console.log((e.target as HTMLImageElement).naturalHeight);
+
+    // changeSize?.(
+    //   (e.target as HTMLImageElement).naturalWidth,
+    //   (e.target as HTMLImageElement).naturalHeight
+    // );
+
+    setDimensions({
+      width: (e.target as HTMLImageElement).naturalWidth,
+      height: (e.target as HTMLImageElement).naturalHeight,
+    });
 
     setLoading(false);
     setErrorOccured(false);
@@ -66,6 +88,18 @@ const CarouselSlide: FC<CarouselSlideProps> = ({
     });
   };
 
+  useEffect(() => {
+    if (
+      flexible &&
+      dimenisons &&
+      (page === currentPage - 1 || currentPage === slidesLength)
+    ) {
+      setTimeout(() => {
+        changeSize?.(dimenisons.width, dimenisons.height);
+      }, 500);
+    }
+  }, [transitionInProgress, dimenisons, currentPage]);
+
   return (
     <div className="carousel-slide">
       {loading && <div className="loader" />}
@@ -74,7 +108,9 @@ const CarouselSlide: FC<CarouselSlideProps> = ({
         imgRendered && (
           <img
             className={`${loading && !cachedImages[page] ? "loading" : ""}`}
-            src={imgUrl}
+            src={
+              page === currentPage - 1 || loadExplicit || cachedImages[page] ? imgUrl : ""
+            }
             onLoadStart={onLoadingStart}
             onLoad={onLoad}
             onError={onError}
@@ -87,6 +123,18 @@ const CarouselSlide: FC<CarouselSlideProps> = ({
           <button onClick={retryLoadImage}>Retry</button>
         </div>
       )}
+      <div
+        style={{
+          position: "absolute",
+          top: "20px",
+          left: "20px",
+          background: "#fff",
+          zIndex: 20,
+          borderRadius: "50%",
+        }}
+      >
+        {page}
+      </div>
     </div>
   );
 };

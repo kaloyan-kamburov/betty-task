@@ -3,6 +3,7 @@ interface CarouselProps {
   imgUrls?: string[];
   width?: number;
   height?: number;
+  flexible?: boolean;
 }
 
 interface CarouselSlideProps {
@@ -13,6 +14,10 @@ interface CarouselSlideProps {
   cachedImages: { [page: number]: boolean };
   imgUrls?: string[];
   loadExplicit?: boolean;
+  transitionInProgress: boolean;
+  changeSize?: (width: number, height: number) => void;
+  flexible?: boolean;
+  slidesLength: number;
 }
 
 export type { CarouselProps, CarouselSlideProps };
