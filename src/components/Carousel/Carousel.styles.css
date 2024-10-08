@@ -16,9 +16,19 @@
   position: relative;
 }
 
+.carousel-slide .inner-wrapper {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #fff;
+  font-size: 20px;
+  padding: 5px;
+}
+
 .carousel-slide img {
   opacity: 1;
   transition: opacity 0.5s linear;
+  max-width: 100%;
 }
 
 .carousel-slide img.loading {

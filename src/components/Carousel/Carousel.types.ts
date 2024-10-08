@@ -9,8 +9,12 @@ interface CarouselProps {
 
 interface CarouselSlideProps {
   imgUrl: string;
-  page: number;
-  currentPage: number;
+  page?: number;
+  currentPage?: number;
+  onImgLoaded: (page: number, blob: string) => void;
+  cachedImages: { [page: number]: string };
+  imgUrls?: string[];
+  loadExplicit?: boolean;
 }
 
 export type { CarouselProps, CarouselSlideProps };
