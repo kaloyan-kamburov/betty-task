@@ -14,7 +14,7 @@ interface CarouselSlideProps {
   imgUrls?: string[];
   loadExplicit?: boolean;
   transitionInProgress: boolean;
-  slidesLength: number;
+  slidesLength?: number;
   width?: number;
 }
 

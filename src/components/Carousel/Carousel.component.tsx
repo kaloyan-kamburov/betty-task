@@ -16,11 +16,10 @@ const Carousel: FC<CarouselProps> = ({
   const [carouselHeight, setCarouselHeight] = useState<number>(height);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [transitionInProgress, setTransitionInProgress] = useState<boolean>(false);
-  const [transition, setTransition] = useState<string>();
-  // `transform ${timePerTransition / 1000}s ease`
+  const [transition, setTransition] = useState<string>(
+    `transform ${timePerTransition / 1000}s ease`
+  );
   const [cachedImages, setCachedImages] = useState<{ [page: number]: boolean }>({});
-
-  // const [flexible, setFlexible] = useState<boolean>(flexible);
 
   const timeoutRef = useRef<number | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -98,7 +97,7 @@ const Carousel: FC<CarouselProps> = ({
     return () => {
       resizeViewportObserver.disconnect();
       wrapperObserver.disconnect();
-    }; // clean up
+    };
   }, []);
 
   return (
