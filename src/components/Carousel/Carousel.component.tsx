@@ -5,8 +5,6 @@ import "./Carousel.styles.css";
 import { useDebounce } from "../../utils/useDebounce";
 
 const Carousel: FC<CarouselProps> = ({
-  // infinite = true,
-  // timePerSlide = 3000,
   timePerTransition = 500,
   imgUrls = [],
   width = 200,
@@ -17,7 +15,7 @@ const Carousel: FC<CarouselProps> = ({
   const [transition, setTransition] = useState<string>(
     `transform ${timePerTransition / 1000}s ease`
   );
-  const [cachedImages, setCachedImages] = useState<{ [page: number]: string }>({});
+  const [cachedImages, setCachedImages] = useState<{ [page: number]: boolean }>({});
 
   const timeoutRef = useRef<number | null>(null);
 
@@ -43,8 +41,8 @@ const Carousel: FC<CarouselProps> = ({
     }, timePerTransition);
   }, 1);
 
-  const onImgLoaded = (page: number, blob: string) => {
-    setCachedImages({ ...cachedImages, [page]: blob });
+  const onImgLoaded = (page: number) => {
+    setCachedImages({ ...cachedImages, [page]: true });
   };
 
   useEffect(() => {
@@ -95,28 +93,6 @@ const Carousel: FC<CarouselProps> = ({
                 cachedImages={cachedImages}
                 loadExplicit
               />
-
-              {/* {cachedImages[imgUrls.length - 1] && (
-                <div className="carousel-slide">
-                  
-                  {cachedImages[imgUrls.length - 1] && (
-                    <img
-                      src={cachedImages[imgUrls.length - 1]}
-                      onLoad={() => {
-                        // console.log("loaded");
-                      }}
-                    />
-                  )}
-                </div>
-              )} */}
-
-              {/* <CarouselSlide
-                  imgUrl={imgUrls[imgUrls.length - 1]}
-                  page={imgUrls.length - 1}
-                  currentPage={currentPage}
-                  onImgLoaded={onImgLoaded}
-                  cachedImages={cachedImages}
-                /> */}
             </div>
 
             {imgUrls?.map((url, index) => (
@@ -132,6 +108,7 @@ const Carousel: FC<CarouselProps> = ({
                   currentPage={currentPage}
                   onImgLoaded={onImgLoaded}
                   cachedImages={cachedImages}
+                  loadExplicit={index === imgUrls.length - 1}
                 />
               </div>
             ))}
@@ -147,33 +124,12 @@ const Carousel: FC<CarouselProps> = ({
                 cachedImages={cachedImages}
                 loadExplicit
               />
-              {/* <div className="carousel-slide">
-                {cachedImages[0] && (
-                  <img
-                    src={cachedImages[0]}
-                    onLoad={() => {
-                      // console.log("loaded");
-                    }}
-                  />
-                )}
-              </div> */}
-
-              {/* {cachedImages[0] ? (
-                // Render the cached version to prevent a second HTTP request
-                <CarouselSlide
-                  imgUrl={imgUrls[0]}
-                  page={0}
-                  currentPage={currentPage}
-                  onImgLoaded={onImgLoaded}
-                  cachedImages={cachedImages}
-                />
-              ) : null} */}
             </div>
           </div>
         </div>
       </div>
-      {currentPage}
-      <pre>{JSON.stringify(cachedImages, null, 4)}</pre>
+      {/* {currentPage}
+      <pre>{JSON.stringify(cachedImages, null, 4)}</pre> */}
     </>
   );
 };
