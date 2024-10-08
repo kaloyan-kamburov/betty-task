@@ -1,9 +1,8 @@
 interface CarouselProps {
   timePerTransition?: number;
   imgUrls?: string[];
-  width?: number;
-  height?: number;
-  flexible?: boolean;
+  width: number;
+  height: number;
 }
 
 interface CarouselSlideProps {
@@ -15,9 +14,8 @@ interface CarouselSlideProps {
   imgUrls?: string[];
   loadExplicit?: boolean;
   transitionInProgress: boolean;
-  changeSize?: (width: number, height: number) => void;
-  flexible?: boolean;
   slidesLength: number;
+  width?: number;
 }
 
 export type { CarouselProps, CarouselSlideProps };

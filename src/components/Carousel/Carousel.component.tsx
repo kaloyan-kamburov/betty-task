@@ -2,31 +2,29 @@
 import { FC, useEffect, useRef, useState, WheelEvent } from "react";
 import { CarouselProps } from "./Carousel.types";
 import CarouselSlide from "./CarouselSlide.component";
-import { useDebounce } from "../../utils/useDebounce";
+import { useDebounce } from "../../utils/hooks/useDebounce";
+import { calcProportionalHeight } from "../../utils/hooks/calcProportionalHeight";
 import "./Carousel.styles.css";
 
 const Carousel: FC<CarouselProps> = ({
   timePerTransition = 500,
   imgUrls = [],
-  width = 0,
-  height = 0,
-  flexible = false,
+  width = 200,
+  height = 200,
 }) => {
+  const [carouselWidth, setCarouselWidth] = useState<number>(width);
+  const [carouselHeight, setCarouselHeight] = useState<number>(height);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [transitionInProgress, setTransitionInProgress] = useState<boolean>(false);
   const [transition, setTransition] = useState<string>();
   // `transform ${timePerTransition / 1000}s ease`
   const [cachedImages, setCachedImages] = useState<{ [page: number]: boolean }>({});
-  const [dimenisons, setDimensions] = useState<{
-    width: number;
-    height: number;
-  }>({
-    width,
-    height,
-  });
+
   // const [flexible, setFlexible] = useState<boolean>(flexible);
 
   const timeoutRef = useRef<number | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
 
   const onWheel = useDebounce((e: WheelEvent) => {
     e.stopPropagation();
@@ -56,127 +54,111 @@ const Carousel: FC<CarouselProps> = ({
     setCachedImages({ ...cachedImages, [page]: true });
   };
 
-  const onChangeSize = (width: number, height: number) => {
-    setDimensions({ width, height });
-  };
+  const onWrapperResize = useDebounce(() => {
+    if (!wrapperRef.current) return;
+    setCarouselWidth(
+      wrapperRef?.current && wrapperRef?.current?.clientWidth >= width
+        ? width
+        : wrapperRef?.current?.clientWidth
+    );
+  }, 100);
+
+  const onViewportResize = useDebounce(() => {
+    const newWidth =
+      viewportRef?.current && viewportRef?.current?.clientWidth < width
+        ? viewportRef?.current?.clientWidth
+        : width;
+    setCarouselWidth(newWidth);
+    const newHeight = calcProportionalHeight(width, height, newWidth);
+    setCarouselHeight(newHeight);
+  }, 100);
 
   useEffect(() => {
     if (!transitionInProgress) {
       if (currentPage === imgUrls.length + 1) {
-        // setTransition("none");
+        setTransition("none");
         setCurrentPage(1);
       } else if (currentPage === 0) {
-        // setTransition("none");
+        setTransition("none");
         setCurrentPage(imgUrls.length);
       }
       setTimeout(() => {
-        // setTransition(`transform ${timePerTransition / 1000}s ease`);
+        setTransition(`transform ${timePerTransition / 1000}s ease`);
       }, 50);
     }
   }, [transitionInProgress]);
 
-  // useEffect(() => {
-  //   console.log(cachedImages);
-  // });
+  useEffect(() => {
+    if (!wrapperRef.current) return;
+    if (!viewportRef.current) return;
+    const wrapperObserver = new ResizeObserver(onWrapperResize);
+    const resizeViewportObserver = new ResizeObserver(onViewportResize);
+    wrapperObserver.observe(wrapperRef.current);
+    resizeViewportObserver.observe(viewportRef.current);
+    return () => {
+      resizeViewportObserver.disconnect();
+      wrapperObserver.disconnect();
+    }; // clean up
+  }, []);
 
   return (
-    <>
-      <div className="carousel-wrapper" onWheel={onWheel}>
+    <div className="carousel-wrapper" onWheel={onWheel} ref={wrapperRef}>
+      <div
+        className="carousel-viewport"
+        style={{
+          width: carouselWidth,
+          height: carouselHeight,
+        }}
+        ref={viewportRef}
+      >
         <div
-          className="carousel-viewport"
+          className="slides-wrapper"
           style={{
-            width: dimenisons.width,
-            height: dimenisons.height,
+            transform: `translateX(${-currentPage * carouselWidth}px)`,
+            transition,
+            width: `${(imgUrls.length + 2) * carouselWidth}px`,
           }}
         >
-          <div
-            className="slides-wrapper"
-            style={{
-              transform: `translateX(${-currentPage * dimenisons.width}px)`,
-              transition,
-            }}
-          >
-            <div
-              style={{
-                width: dimenisons.width,
-              }}
-            >
-              <CarouselSlide
-                imgUrl={imgUrls[imgUrls.length - 1]}
-                page={imgUrls.length - 1}
-                currentPage={currentPage}
-                onImgLoaded={onImgLoaded}
-                cachedImages={cachedImages}
-                transitionInProgress={transitionInProgress}
-                loadExplicit
-                changeSize={onChangeSize}
-                flexible={flexible}
-                slidesLength={imgUrls.length}
-              />
-            </div>
+          <CarouselSlide
+            imgUrl={imgUrls[imgUrls.length - 1]}
+            page={imgUrls.length - 1}
+            currentPage={currentPage}
+            onImgLoaded={onImgLoaded}
+            cachedImages={cachedImages}
+            transitionInProgress={transitionInProgress}
+            loadExplicit
+            slidesLength={imgUrls.length}
+            width={carouselWidth}
+          />
 
-            {imgUrls?.map((url, index) => (
-              <div
-                key={index}
-                style={{
-                  width: dimenisons.width,
-                }}
-              >
-                <CarouselSlide
-                  imgUrl={url}
-                  page={index}
-                  currentPage={currentPage}
-                  onImgLoaded={onImgLoaded}
-                  cachedImages={cachedImages}
-                  loadExplicit={index === imgUrls.length - 1}
-                  transitionInProgress={transitionInProgress}
-                  changeSize={onChangeSize}
-                  flexible={flexible}
-                  slidesLength={imgUrls.length}
-                />
-              </div>
-            ))}
-            <div
-              style={{
-                width: dimenisons.width,
-              }}
-            >
-              <CarouselSlide
-                imgUrl={imgUrls[0]}
-                page={0}
-                onImgLoaded={onImgLoaded}
-                cachedImages={cachedImages}
-                loadExplicit
-                transitionInProgress={transitionInProgress}
-                changeSize={onChangeSize}
-                flexible={flexible}
-                slidesLength={imgUrls.length}
-              />
-            </div>
-          </div>
+          {imgUrls?.map((url, index) => (
+            <CarouselSlide
+              key={index}
+              imgUrl={url}
+              page={index}
+              width={carouselWidth}
+              currentPage={currentPage}
+              onImgLoaded={onImgLoaded}
+              cachedImages={cachedImages}
+              loadExplicit={index === imgUrls.length - 1}
+              transitionInProgress={transitionInProgress}
+              slidesLength={imgUrls.length}
+            />
+          ))}
+
+          <CarouselSlide
+            imgUrl={imgUrls[0]}
+            page={0}
+            onImgLoaded={onImgLoaded}
+            cachedImages={cachedImages}
+            loadExplicit
+            transitionInProgress={transitionInProgress}
+            slidesLength={imgUrls.length}
+            width={carouselWidth}
+          />
         </div>
       </div>
-      {/* <button
-        onClick={() => {
-          setdimenisons.width(dimenisons.width === 200 ? 400 : 200);
-          setdimenisons.height(dimenisons.height === 200 ? 400 : 200);
-        }}
-      >
-        dsa
-      </button> */}
-      {currentPage}
-      {`${transitionInProgress}`}
-      {/* <label>
-        <input
-          type="checkbox"
-          checked={flexible}
-          onChange={() => setFlexible(!flexible)}
-        />
-        Flexible
-      </label> */}
-
-      <pre>{JSON.stringify(cachedImages, null, 4)}</pre>
-    </>
+    </div>
   );
 };
 
