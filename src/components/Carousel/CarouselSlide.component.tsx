@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useState } from "react";
 import { CarouselSlideProps } from "./Carousel.types";
 
@@ -46,7 +45,9 @@ const CarouselSlide: FC<CarouselSlideProps> = ({
         width,
       }}
     >
+      {/* show loader before image is loaded */}
       {loading && <div className="loader" data-testid="loader" />}
+
       {!errorOccured ? (
         (page === currentPage - 1 || loadExplicit || cachedImages[page]) &&
         imgRendered && (

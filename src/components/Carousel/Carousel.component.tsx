@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { FC, useEffect, useRef, useState, WheelEvent } from "react";
 import { CarouselProps } from "./Carousel.types";
 import CarouselSlide from "./CarouselSlide.component";
