@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FC, useState, useEffect } from "react";
+import { FC, useState } from "react";
 import { CarouselSlideProps } from "./Carousel.types";
 
 const CarouselSlide: FC<CarouselSlideProps> = ({
