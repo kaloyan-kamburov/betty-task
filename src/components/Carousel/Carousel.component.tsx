@@ -21,7 +21,7 @@ const Carousel: FC<CarouselProps> = ({
   );
   const [cachedImages, setCachedImages] = useState<{ [page: number]: boolean }>({});
 
-  const timeoutRef = useRef<number | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
 
@@ -35,9 +35,9 @@ const Carousel: FC<CarouselProps> = ({
     setTransitionInProgress(true);
 
     if (e.deltaY > 0) {
-      setCurrentPage(currentPage - 1);
-    } else {
       setCurrentPage(currentPage + 1);
+    } else {
+      setCurrentPage(currentPage - 1);
     }
 
     if (timeoutRef.current) {
@@ -63,6 +63,7 @@ const Carousel: FC<CarouselProps> = ({
   }, 100);
 
   const onViewportResize = useDebounce(() => {
+    setTransition("none");
     const newWidth =
       viewportRef?.current && viewportRef?.current?.clientWidth < width
         ? viewportRef?.current?.clientWidth
@@ -70,6 +71,9 @@ const Carousel: FC<CarouselProps> = ({
     setCarouselWidth(newWidth);
     const newHeight = calcProportionalHeight(width, height, newWidth);
     setCarouselHeight(newHeight);
+    setTimeout(() => {
+      setTransition(`transform ${timePerTransition / 1000}s ease`);
+    }, 500);
   }, 100);
 
   useEffect(() => {
