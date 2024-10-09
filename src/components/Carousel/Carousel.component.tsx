@@ -133,9 +133,7 @@ const Carousel: FC<CarouselProps> = ({
               currentPage={currentPage}
               onImgLoaded={onImgLoaded}
               cachedImages={cachedImages}
-              transitionInProgress={transitionInProgress}
               loadExplicit
-              slidesLength={imgUrls.length}
               width={carouselWidth}
             />
 
@@ -144,13 +142,11 @@ const Carousel: FC<CarouselProps> = ({
                 key={index}
                 imgUrl={url}
                 page={index}
-                width={carouselWidth}
                 currentPage={currentPage}
                 onImgLoaded={onImgLoaded}
                 cachedImages={cachedImages}
                 loadExplicit={index === imgUrls.length - 1}
-                transitionInProgress={transitionInProgress}
-                slidesLength={imgUrls.length}
+                width={carouselWidth}
               />
             ))}
 
@@ -160,8 +156,6 @@ const Carousel: FC<CarouselProps> = ({
               onImgLoaded={onImgLoaded}
               cachedImages={cachedImages}
               loadExplicit
-              transitionInProgress={transitionInProgress}
-              slidesLength={imgUrls.length}
               width={carouselWidth}
             />
           </div>

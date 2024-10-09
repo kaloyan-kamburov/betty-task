@@ -14,7 +14,6 @@ describe("CarouselSlide", () => {
       cachedImages: {},
       loadExplicit: false,
       width: 100,
-      transitionInProgress: false,
     };
 
     render(<CarouselSlide {...props} />);
@@ -34,7 +33,6 @@ describe("CarouselSlide", () => {
       },
       loadExplicit: false,
       width: 100,
-      transitionInProgress: false,
     };
 
     render(<CarouselSlide {...props} />);

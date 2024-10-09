@@ -13,8 +13,6 @@ interface CarouselSlideProps {
   cachedImages: { [page: number]: boolean };
   imgUrls?: string[];
   loadExplicit?: boolean;
-  transitionInProgress: boolean;
-  slidesLength?: number;
   width?: number;
 }
 
