@@ -1,6 +1,6 @@
 interface CarouselProps {
   timePerTransition?: number;
-  imgUrls?: string[];
+  imgUrls: string[];
   width: number;
   height: number;
 }

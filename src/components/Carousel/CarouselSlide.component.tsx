@@ -46,7 +46,7 @@ const CarouselSlide: FC<CarouselSlideProps> = ({
         width,
       }}
     >
-      {loading && <div className="loader" />}
+      {loading && <div className="loader" data-testid="loader" />}
       {!errorOccured ? (
         (page === currentPage - 1 || loadExplicit || cachedImages[page]) &&
         imgRendered && (
