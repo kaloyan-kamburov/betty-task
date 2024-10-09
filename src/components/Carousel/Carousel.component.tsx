@@ -97,7 +97,7 @@ const Carousel: FC<CarouselProps> = ({
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
     if (isLeftSwipe) {
-      setCurrentPage(currentPage - 1);
+      setCurrentPage(currentPage + 1);
       return;
     }
     if (isRightSwipe) {
