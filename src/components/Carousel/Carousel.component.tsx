@@ -75,6 +75,38 @@ const Carousel: FC<CarouselProps> = ({
     }, 500);
   }, 100);
 
+  //swipe
+  const touchStart = useRef<number | null>(null);
+  const touchEnd = useRef<number | null>(null);
+
+  // the required distance between touchStart and touchEnd to be detected as a swipe
+  const minSwipeDistance = 20;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchEnd.current = null;
+    touchStart.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEnd.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart.current || !touchEnd.current) return;
+    const distance = touchStart.current - touchEnd.current;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) {
+      setCurrentPage(currentPage + 1);
+      return;
+    }
+    if (isRightSwipe) {
+      setCurrentPage(currentPage - 1);
+      return;
+    }
+    // add your conditional logic here
+  };
+
   useEffect(() => {
     if (!transitionInProgress) {
       if (currentPage === imgUrls.length + 1) {
@@ -108,6 +140,9 @@ const Carousel: FC<CarouselProps> = ({
       className="carousel-wrapper"
       onWheel={!!imgUrls.length ? onWheel : undefined}
       ref={wrapperRef}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       <div
         className="carousel-viewport"

@@ -15,6 +15,8 @@ The component must:
 - Work on both mobile and desktop
 - Work equally well with a dozen of images, as well as 1000+ images
 - Be reusable
-  Notes
+
+## Notes
+
 - You can use the Picsum list api or any other public api to get the images -
   https://picsum.photos/
