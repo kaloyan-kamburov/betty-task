@@ -95,16 +95,19 @@ const Carousel: FC<CarouselProps> = ({
     if (!touchStart.current || !touchEnd.current) return;
     const distance = touchStart.current - touchEnd.current;
     const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-    if (isLeftSwipe) {
-      setCurrentPage(currentPage + 1);
-      return;
+
+    if (distance !== 0) {
+      setTransitionInProgress(true);
+      setCurrentPage(currentPage + (isLeftSwipe ? 1 : -1));
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        setTransitionInProgress(false);
+      }, timePerTransition);
     }
-    if (isRightSwipe) {
-      setCurrentPage(currentPage - 1);
-      return;
-    }
-    // add your conditional logic here
   };
 
   useEffect(() => {
@@ -136,66 +139,69 @@ const Carousel: FC<CarouselProps> = ({
   }, []);
 
   return (
-    <div
-      className="carousel-wrapper"
-      onWheel={!!imgUrls.length ? onWheel : undefined}
-      ref={wrapperRef}
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-    >
+    <>
       <div
-        className="carousel-viewport"
-        style={{
-          width: carouselWidth,
-          height: carouselHeight,
-        }}
-        ref={viewportRef}
+        className="carousel-wrapper"
+        onWheel={!!imgUrls.length ? onWheel : undefined}
+        ref={wrapperRef}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
-        {!!imgUrls.length && (
-          <div
-            className="slides-wrapper"
-            style={{
-              transform: `translateX(${-currentPage * carouselWidth}px)`,
-              transition,
-              width: `${(imgUrls.length + 2) * carouselWidth}px`,
-            }}
-          >
-            <CarouselSlide
-              imgUrl={imgUrls[imgUrls.length - 1]}
-              page={imgUrls.length - 1}
-              currentPage={currentPage}
-              onImgLoaded={onImgLoaded}
-              cachedImages={cachedImages}
-              loadExplicit
-              width={carouselWidth}
-            />
-
-            {imgUrls?.map((url, index) => (
+        <div
+          className="carousel-viewport"
+          style={{
+            width: carouselWidth,
+            height: carouselHeight,
+          }}
+          ref={viewportRef}
+        >
+          {!!imgUrls.length && (
+            <div
+              className="slides-wrapper"
+              style={{
+                transform: `translateX(${-currentPage * carouselWidth}px)`,
+                transition,
+                width: `${(imgUrls.length + 2) * carouselWidth}px`,
+              }}
+            >
               <CarouselSlide
-                key={index}
-                imgUrl={url}
-                page={index}
+                imgUrl={imgUrls[imgUrls.length - 1]}
+                page={imgUrls.length - 1}
                 currentPage={currentPage}
                 onImgLoaded={onImgLoaded}
                 cachedImages={cachedImages}
-                loadExplicit={index === imgUrls.length - 1}
+                loadExplicit
                 width={carouselWidth}
               />
-            ))}
 
-            <CarouselSlide
-              imgUrl={imgUrls[0]}
-              page={0}
-              onImgLoaded={onImgLoaded}
-              cachedImages={cachedImages}
-              loadExplicit
-              width={carouselWidth}
-            />
-          </div>
-        )}
+              {imgUrls?.map((url, index) => (
+                <CarouselSlide
+                  key={index}
+                  imgUrl={url}
+                  page={index}
+                  currentPage={currentPage}
+                  onImgLoaded={onImgLoaded}
+                  cachedImages={cachedImages}
+                  loadExplicit={index === imgUrls.length - 1}
+                  width={carouselWidth}
+                />
+              ))}
+
+              <CarouselSlide
+                imgUrl={imgUrls[0]}
+                page={0}
+                onImgLoaded={onImgLoaded}
+                cachedImages={cachedImages}
+                loadExplicit
+                width={carouselWidth}
+              />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      {`${currentPage}`}
+    </>
   );
 };
 
