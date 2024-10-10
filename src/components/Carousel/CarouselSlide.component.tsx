@@ -63,6 +63,7 @@ const CarouselSlide: FC<CarouselSlideProps> = ({
           />
         )
       ) : (
+        // show error message and retry button
         <div className="error">
           <span>An error occured</span>
           <button onClick={retryLoadImage}>Retry</button>

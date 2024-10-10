@@ -126,8 +126,7 @@ const Carousel: FC<CarouselProps> = ({
   }, [transitionInProgress]);
 
   useEffect(() => {
-    if (!wrapperRef.current) return;
-    if (!viewportRef.current) return;
+    if (!wrapperRef.current || !viewportRef.current) return;
     const wrapperObserver = new ResizeObserver(onWrapperResize);
     const resizeViewportObserver = new ResizeObserver(onViewportResize);
     wrapperObserver.observe(wrapperRef.current);
@@ -139,69 +138,66 @@ const Carousel: FC<CarouselProps> = ({
   }, []);
 
   return (
-    <>
+    <div
+      className="carousel-wrapper"
+      onWheel={!!imgUrls.length ? onWheel : undefined}
+      ref={wrapperRef}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       <div
-        className="carousel-wrapper"
-        onWheel={!!imgUrls.length ? onWheel : undefined}
-        ref={wrapperRef}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        className="carousel-viewport"
+        style={{
+          width: carouselWidth,
+          height: carouselHeight,
+        }}
+        ref={viewportRef}
       >
-        <div
-          className="carousel-viewport"
-          style={{
-            width: carouselWidth,
-            height: carouselHeight,
-          }}
-          ref={viewportRef}
-        >
-          {!!imgUrls.length && (
-            <div
-              className="slides-wrapper"
-              style={{
-                transform: `translateX(${-currentPage * carouselWidth}px)`,
-                transition,
-                width: `${(imgUrls.length + 2) * carouselWidth}px`,
-              }}
-            >
+        {!!imgUrls.length && (
+          <div
+            className="slides-wrapper"
+            style={{
+              transform: `translateX(${-currentPage * carouselWidth}px)`,
+              transition,
+              width: `${(imgUrls.length + 2) * carouselWidth}px`,
+            }}
+          >
+            <CarouselSlide
+              imgUrl={imgUrls[imgUrls.length - 1]}
+              page={imgUrls.length - 1}
+              currentPage={currentPage}
+              onImgLoaded={onImgLoaded}
+              cachedImages={cachedImages}
+              // loadExplicit
+              width={carouselWidth}
+            />
+
+            {imgUrls?.map((url, index) => (
               <CarouselSlide
-                imgUrl={imgUrls[imgUrls.length - 1]}
-                page={imgUrls.length - 1}
+                key={index}
+                imgUrl={url}
+                page={index}
                 currentPage={currentPage}
                 onImgLoaded={onImgLoaded}
                 cachedImages={cachedImages}
-                loadExplicit
+                // loadExplicit={index === imgUrls.length - 1}
                 width={carouselWidth}
               />
+            ))}
 
-              {imgUrls?.map((url, index) => (
-                <CarouselSlide
-                  key={index}
-                  imgUrl={url}
-                  page={index}
-                  currentPage={currentPage}
-                  onImgLoaded={onImgLoaded}
-                  cachedImages={cachedImages}
-                  loadExplicit={index === imgUrls.length - 1}
-                  width={carouselWidth}
-                />
-              ))}
-
-              <CarouselSlide
-                imgUrl={imgUrls[0]}
-                page={0}
-                onImgLoaded={onImgLoaded}
-                cachedImages={cachedImages}
-                loadExplicit
-                width={carouselWidth}
-              />
-            </div>
-          )}
-        </div>
+            <CarouselSlide
+              imgUrl={imgUrls[0]}
+              page={0}
+              onImgLoaded={onImgLoaded}
+              cachedImages={cachedImages}
+              loadExplicit
+              width={carouselWidth}
+            />
+          </div>
+        )}
       </div>
-      {`${currentPage}`}
-    </>
+    </div>
   );
 };
 
