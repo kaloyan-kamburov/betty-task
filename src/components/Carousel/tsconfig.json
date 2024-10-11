@@ -8,8 +8,9 @@
     "jsx": "react",
     "esModuleInterop": true,
     "moduleResolution": "node16",
-    "skipLibCheck": true, // Optional: Enable esModuleInterop
-    "allowSyntheticDefaultImports": true // Optional: Allow synthetic default imports
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["node"]
   },
   "include": ["*.ts", "*.tsx", "setupTests.ts"],
   "exclude": ["node_modules", "dist"]
