@@ -11,16 +11,15 @@ const Carousel: FC<CarouselProps> = ({
   width = 300,
   height = 300,
 }) => {
+  const defaultTransition = `transform ${timePerTransition / 1000}s ease`;
   const [carouselWidth, setCarouselWidth] = useState<number>(width);
   const [carouselHeight, setCarouselHeight] = useState<number>(height);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [transitionInProgress, setTransitionInProgress] = useState<boolean>(false);
-  const [transition, setTransition] = useState<string>(
-    `transform ${timePerTransition / 1000}s ease`
-  );
+  const [transition, setTransition] = useState<string>(defaultTransition);
   const [cachedImages, setCachedImages] = useState<{ [page: number]: boolean }>({});
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const swipeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,27 +32,18 @@ const Carousel: FC<CarouselProps> = ({
 
     setTransitionInProgress(true);
 
-    if (e.deltaY > 0) {
-      setCurrentPage(currentPage + 1);
-    } else {
-      setCurrentPage(currentPage - 1);
-    }
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      setTransitionInProgress(false);
-    }, timePerTransition);
+    //determine direction
+    setCurrentPage(currentPage + e.deltaY > 0 ? 1 : -1);
   }, 1);
 
   const onImgLoaded = (page: number) => {
+    //cache images to prevent reloading
     setCachedImages({ ...cachedImages, [page]: true });
   };
 
   const onWrapperResize = useDebounce(() => {
     if (!wrapperRef.current) return;
+    //set width of the wrapper depending if it's wider or narrower than the initial width
     setCarouselWidth(
       wrapperRef?.current && wrapperRef?.current?.clientWidth >= width
         ? width
@@ -62,25 +52,26 @@ const Carousel: FC<CarouselProps> = ({
   }, 100);
 
   const onViewportResize = useDebounce(() => {
+    //disable transition to prevent flickering
     setTransition("none");
     const newWidth =
       viewportRef?.current && viewportRef?.current?.clientWidth < width
         ? viewportRef?.current?.clientWidth
         : width;
     setCarouselWidth(newWidth);
+    //calculate new height proportionally to the width
     const newHeight = calcProportionalHeight(width, height, newWidth);
     setCarouselHeight(newHeight);
+    //return default transition
     setTimeout(() => {
-      setTransition(`transform ${timePerTransition / 1000}s ease`);
+      setTransition(defaultTransition);
     }, 500);
   }, 100);
 
   //swipe
   const touchStart = useRef<number | null>(null);
   const touchEnd = useRef<number | null>(null);
-
-  // the required distance between touchStart and touchEnd to be detected as a swipe
-  const minSwipeDistance = 20;
+  const minSwipeLength = 20;
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchEnd.current = null;
@@ -94,17 +85,19 @@ const Carousel: FC<CarouselProps> = ({
   const onTouchEnd = () => {
     if (!touchStart.current || !touchEnd.current) return;
     const distance = touchStart.current - touchEnd.current;
-    const isLeftSwipe = distance > minSwipeDistance;
+    const isLeftSwipe = distance > minSwipeLength;
 
+    //if swipe occurs, determine left or right
     if (distance !== 0) {
       setTransitionInProgress(true);
       setCurrentPage(currentPage + (isLeftSwipe ? 1 : -1));
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      //if swipe occurs during transition
+      if (swipeTimeoutRef.current) {
+        clearTimeout(swipeTimeoutRef.current);
       }
 
-      timeoutRef.current = setTimeout(() => {
+      swipeTimeoutRef.current = setTimeout(() => {
         setTransitionInProgress(false);
       }, timePerTransition);
     }
@@ -112,15 +105,18 @@ const Carousel: FC<CarouselProps> = ({
 
   useEffect(() => {
     if (!transitionInProgress) {
+      //if on last page
       if (currentPage === imgUrls.length + 1) {
         setTransition("none");
         setCurrentPage(1);
+        //if on first page
       } else if (currentPage === 0) {
         setTransition("none");
         setCurrentPage(imgUrls.length);
       }
+      //return to default transition
       setTimeout(() => {
-        setTransition(`transform ${timePerTransition / 1000}s ease`);
+        setTransition(defaultTransition);
       }, 50);
     }
   }, [transitionInProgress]);

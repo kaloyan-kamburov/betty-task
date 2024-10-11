@@ -6,6 +6,9 @@ function App() {
     <>
       <h1 className="text-center">Betty carousel task</h1>
       <Carousel
+        width={500}
+        height={500}
+        timePerTransition={350}
         imgUrls={[
           "https://scontent.fsof8-1.fna.fbcdn.net/v/t39.30808-6/450239729_791260459865789_599670013985958012_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_ohc=md8-UiOPzzUQ7kNvgF38qO-&_nc_ht=scontent.fsof8-1.fna&_nc_gid=AP7OR6auEIppIvRlXJ02smt&oh=00_AYDNvcTTEicWIuXQnA7cIf4p_GZztSeFY85NL0xfYQW9IA&oe=670DA1A5",
           "https://picsum.photos/600/300",
