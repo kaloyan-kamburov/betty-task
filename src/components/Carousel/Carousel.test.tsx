@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import React, { render } from "@testing-library/react";
 import { it, describe, expect } from "vitest";
 
 import { CarouselProps } from "./Carousel.types";

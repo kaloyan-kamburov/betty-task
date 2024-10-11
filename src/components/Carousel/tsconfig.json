@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "Node16",
+    "declaration": true,
+    "outDir": "dist",
+    "strict": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "moduleResolution": "node16",
+    "skipLibCheck": true, // Optional: Enable esModuleInterop
+    "allowSyntheticDefaultImports": true // Optional: Allow synthetic default imports
+  },
+  "include": ["*.ts", "*.tsx", "setupTests.ts"],
+  "exclude": ["node_modules", "dist"]
+}

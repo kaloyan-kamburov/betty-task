@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, useState, WheelEvent } from "react";
+import React, { FC, useEffect, useRef, useState, WheelEvent } from "react";
 import { CarouselProps } from "./Carousel.types";
 import CarouselSlide from "./CarouselSlide.component";
 import { useDebounce } from "./utils/useDebounce";

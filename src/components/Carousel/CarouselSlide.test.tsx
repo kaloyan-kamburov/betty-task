@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import React, { render, screen, fireEvent } from "@testing-library/react";
 import { it, describe, expect, vitest } from "vitest";
 
 import { CarouselSlideProps } from "./Carousel.types";
