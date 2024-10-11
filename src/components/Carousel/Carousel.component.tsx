@@ -19,7 +19,7 @@ const Carousel: FC<CarouselProps> = ({
   const [transition, setTransition] = useState<string>(defaultTransition);
   const [cachedImages, setCachedImages] = useState<{ [page: number]: boolean }>({});
 
-  const swipeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const transitionRef = useRef<NodeJS.Timeout | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const viewportRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,7 +33,19 @@ const Carousel: FC<CarouselProps> = ({
     setTransitionInProgress(true);
 
     //determine direction
-    setCurrentPage(currentPage + e.deltaY > 0 ? 1 : -1);
+    if (e.deltaY > 0) {
+      setCurrentPage(currentPage + 1);
+    } else {
+      setCurrentPage(currentPage - 1);
+    }
+
+    if (transitionRef.current) {
+      clearTimeout(transitionRef.current);
+    }
+
+    transitionRef.current = setTimeout(() => {
+      setTransitionInProgress(false);
+    }, timePerTransition);
   }, 1);
 
   const onImgLoaded = (page: number) => {
@@ -93,11 +105,11 @@ const Carousel: FC<CarouselProps> = ({
       setCurrentPage(currentPage + (isLeftSwipe ? 1 : -1));
 
       //if swipe occurs during transition
-      if (swipeTimeoutRef.current) {
-        clearTimeout(swipeTimeoutRef.current);
+      if (transitionRef.current) {
+        clearTimeout(transitionRef.current);
       }
 
-      swipeTimeoutRef.current = setTimeout(() => {
+      transitionRef.current = setTimeout(() => {
         setTransitionInProgress(false);
       }, timePerTransition);
     }

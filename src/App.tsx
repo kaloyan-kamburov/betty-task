@@ -1,5 +1,5 @@
-import { Carousel } from "betty-carrousel";
-// import Carousel from "./components/Carousel/Carousel.component";
+// import { Carousel } from "betty-carrousel";
+import Carousel from "./components/Carousel/Carousel.component";
 
 function App() {
   return (
