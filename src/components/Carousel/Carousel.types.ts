@@ -1,8 +1,8 @@
 interface CarouselProps {
   timePerTransition?: number;
   imgUrls: string[];
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 }
 
 interface CarouselSlideProps {

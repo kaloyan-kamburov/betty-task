@@ -8,8 +8,8 @@ import "./Carousel.styles.css";
 const Carousel: FC<CarouselProps> = ({
   timePerTransition = 500,
   imgUrls = [],
-  width = 200,
-  height = 200,
+  width = 300,
+  height = 300,
 }) => {
   const [carouselWidth, setCarouselWidth] = useState<number>(width);
   const [carouselHeight, setCarouselHeight] = useState<number>(height);
