@@ -23,7 +23,6 @@ export default tseslint.config(
       "react-hooks/exhaustive-deps": "off",
       "no-extra-boolean-cast": "off",
       "@typescript-eslint/no-unused-vars": "off",
-      "react/react-in-jsx-scope": "off",
     },
   }
 );
